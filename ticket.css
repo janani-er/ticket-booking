@@ -1,0 +1,81 @@
+
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #ece9e6, #ffffff);
+  margin: 0;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.ticket {
+  background: #fff;
+  max-width: 500px;
+  width: 90%;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.ticket h2 {
+  margin-bottom: 25px;
+  font-weight: 700;
+  color: #333;
+  font-size: 28px;
+}
+
+#ticketDetails p {
+  font-size: 16px;
+  color: #555;
+  margin: 6px 0;
+}
+
+#qrcode {
+  margin: 30px 0;
+}
+
+.share-button {
+  display: inline-block;
+  background-color: #25D366;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.share-button:hover {
+  background-color: #1ebe57;
+}
+
+.note {
+  margin-top: 25px;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 480px) {
+  .ticket {
+    padding: 25px 20px;
+  }
+
+  .ticket h2 {
+    font-size: 24px;
+  }
+
+  #ticketDetails p {
+    font-size: 14px;
+  }
+
+  .share-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
