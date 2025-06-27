@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment – Weekend Concert</title>
+  <link rel="stylesheet" href="css/payment.css">
+  <style>
+    #loading {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Complete Your Payment</h2>
+    <div class="details" id="ticketSummary"></div>
+
+    <div class="payment-options">
+      <button id="cardBtn" class="active" onclick="togglePayment('card')">Card</button>
+      <button id="upiBtn" onclick="togglePayment('upi')">UPI</button>
+    </div>
+
+    <form id="paymentForm" onsubmit="submitPayment(event)">
+      <div id="cardSection">
+        <div class="form-group">
+          <label>Card Number</label>
+          <input type="text" id="cardNumber" maxlength="16" placeholder="1234 5678 9012 3456">
+        </div>
+        <div class="form-group">
+          <label>Expiry Date</label>
+          <input type="month" id="expiry">
+        </div>
+        <div class="form-group">
+          <label>CVV</label>
+          <input type="password" id="cvv" maxlength="3" placeholder="123">
+        </div>
+      </div>
+
+      <div id="upiSection" style="display: none;">
+        <div class="form-group">
+          <label>UPI ID</label>
+          <input type="text" id="upiId" placeholder="yourname@upi">
+        </div>
+      </div>
+
+      <button type="submit">Pay ₹<span id="totalPrice">0</span></button>
+    </form>
+
+    <div id="loading">Processing payment...</div>
+  </div>
+
+  <script>
+    const ticketId = localStorage.getItem('currentTicketId');
+    const data = JSON.parse(localStorage.getItem(ticketId));
+    const total = (data.category === 'VIP' ? 1999 : 999) * parseInt(data.quantity);
+
+    document.getElementById('totalPrice').innerText = total;
+    document.getElementById('ticketSummary').innerHTML = `
+      <p><strong>Name:</strong> ${data.name}</p>
+      <p><strong>Email:</strong> ${data.email}</p>
+      <p><strong>Category:</strong> ${data.category}</p>
+      <p><strong>Tickets:</strong> ${data.quantity}</p>
+      <p><strong>Total to Pay:</strong> ₹${total}</p>
+    `;
+
+    function togglePayment(method) {
+      document.getElementById('cardSection').style.display = method === 'card' ? 'block' : 'none';
+      document.getElementById('upiSection').style.display = method === 'upi' ? 'block' : 'none';
+      document.getElementById('cardBtn').classList.toggle('active', method === 'card');
+      document.getElementById('upiBtn').classList.toggle('active', method === 'upi');
+    }
+
+    function submitPayment(e) {
+      e.preventDefault();
+      const cardVisible = document.getElementById('cardSection').style.display !== 'none';
+
+      if (cardVisible) {
+        const cardNumber = document.getElementById('cardNumber').value.trim();
+        const cvv = document.getElementById('cvv').value.trim();
+        if (cardNumber.length !== 16 || isNaN(cardNumber)) {
+          alert('Invalid card number');
+          return;
+        }
+        if (cvv.length !== 3 || isNaN(cvv)) {
+          alert('Invalid CVV');
+          return;
+        }
+      } else {
+        const upiId = document.getElementById('upiId').value.trim();
+        if (!upiId.includes('@') || upiId.length < 5) {
+          alert('Enter a valid UPI ID');
+          return;
+        }
+      }
+
+      const loading = document.getElementById('loading');
+      loading.style.display = 'block';
+
+      setTimeout(() => {
+        alert('✅ Payment successful!');
+        window.location.href = 'ticket.html';
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

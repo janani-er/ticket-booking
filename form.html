@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book Ticket – Weekend Concert</title>
+  <link rel="stylesheet" href="css/form.css">
+</head>
+<body>
+  <form id="bookingForm">
+    <h2>Weekend – Dawn FM Concert Ticket</h2>
+
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required pattern="[0-9]{10}">
+    <input type="number" id="age" placeholder="Age" min="10" max="100" required>
+
+    <select id="gender" required>
+      <option value="">Gender</option>
+      <option value="Female">Female</option>
+      <option value="Male">Male</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <input type="text" id="city" placeholder="City" required>
+
+    <select id="category" required>
+      <option value="">Select Ticket Category</option>
+      <option value="General">General – ₹999</option>
+      <option value="VIP">VIP – ₹1999</option>
+    </select>
+
+    <input type="number" id="quantity" placeholder="Number of Tickets" min="1" max="5" required>
+
+    <textarea id="accessibility" placeholder="Accessibility Needs (if any)"></textarea>
+
+    <select id="entrySlot">
+      <option value="">Preferred Entry Slot (optional)</option>
+      <option value="6:00 PM - 6:30 PM">6:00 PM - 6:30 PM</option>
+      <option value="6:30 PM - 7:00 PM">6:30 PM - 7:00 PM</option>
+      <option value="7:00 PM - 7:30 PM">7:00 PM - 7:30 PM</option>
+    </select>
+
+    <button type="submit">Proceed to Payment</button>
+  </form>
+
+  <script>
+    document.getElementById('bookingForm').onsubmit = function(e) {
+      e.preventDefault();
+
+      const ticketId = 'T' + Date.now();
+      const data = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        age: document.getElementById('age').value,
+        gender: document.getElementById('gender').value,
+        city: document.getElementById('city').value,
+        category: document.getElementById('category').value,
+        quantity: document.getElementById('quantity').value,
+        accessibility: document.getElementById('accessibility').value,
+        entrySlot: document.getElementById('entrySlot').value,
+        verified: false
+      };
+
+      localStorage.setItem(ticketId, JSON.stringify(data));
+      //localStorage.setItem('currentTicketId', ticketId);
+      window.location.href = 'payment.html';
+    };
+  </script>
+</body>
+</html>

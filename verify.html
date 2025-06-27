@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ticket Verification – Weekend Concert</title>
+  <link rel="stylesheet" href="css/verify.css">
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+</head>
+<body>
+  <div class="verification-box">
+    <h2>🎫 Ticket Verification</h2>
+
+    <div id="authSection">
+      <input type="password" id="passcode" placeholder="Enter Staff Passcode" />
+      <br>
+      <button onclick="checkPasscode()">Unlock Scanner</button>
+      <p id="authMessage" style="color: #e74c3c; margin-top: 10px;"></p>
+    </div>
+
+    <div id="scannerSection" style="display: none;">
+      <div id="qr-reader" style="width: 100%; max-width: 400px; margin: 20px auto;"></div>
+      <div id="ticketInfo" style="margin-top: 20px;"></div>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const PASSCODE = "dawnstaff123";
+    let scanner;
+
+    function checkPasscode() {
+      const input = document.getElementById("passcode").value.trim();
+      const msg = document.getElementById("authMessage");
+
+      if (input === PASSCODE) {
+        msg.textContent = "";
+        document.getElementById("authSection").style.display = "none";
+        document.getElementById("scannerSection").style.display = "block";
+        startScanner();
+      } else {
+        msg.textContent = "❌ Incorrect password. Access denied.";
+      }
+    }
+
+    function startScanner() {
+      scanner = new Html5Qrcode("qr-reader");
+
+      Html5Qrcode.getCameras().then(devices => {
+        if (devices && devices.length) {
+          scanner.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
+            scannedText => {
+              handleScan(scannedText);
+            },
+            () => {}
+          );
+        } else {
+          alert("No camera found.");
+        }
+      }).catch(err => {
+        alert("Camera error.");
+        console.error(err);
+      });
+    }
+
+    function handleScan(scannedURL) {
+      try {
+        const url = new URL(scannedURL);
+        const ticketId = new URLSearchParams(url.search).get("id");
+
+        if (!ticketId || !localStorage.getItem(ticketId)) {
+          showResult("❌ Ticket not found.", "error");
+          restartScanner();
+          return;
+        }
+
+        const data = JSON.parse(localStorage.getItem(ticketId));
+
+        document.getElementById("ticketInfo").innerHTML = `
+          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Category:</strong> ${data.category}</p>
+          <p><strong>Tickets:</strong> ${data.quantity}</p>
+        `;
+
+        if (data.verified) {
+          showResult("⚠️ Already verified. Entry denied.", "warning");
+        } else {
+          data.verified = true;
+          localStorage.setItem(ticketId, JSON.stringify(data));
+          showResult("✅ Ticket verified. Allow entry.", "success");
+        }
+
+      } catch (err) {
+        showResult("❌ Invalid QR code format.", "error");
+      }
+
+      restartScanner(); // always restart
+    }
+
+    function showResult(message, statusClass) {
+      const result = document.getElementById("result");
+      result.textContent = message;
+      result.className = statusClass;
+    }
+
+    function restartScanner() {
+      scanner.stop().then(() => {
+        setTimeout(() => {
+          startScanner();
+        }, 1500); // delay before restart
+      }).catch(err => {
+        console.error("Scanner restart failed", err);
+      });
+    }
+  </script>
+</body>
+</html>
